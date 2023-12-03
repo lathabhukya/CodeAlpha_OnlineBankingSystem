@@ -1,0 +1,92 @@
+import java.util.*;
+
+class Account {
+    String name;
+    double balance;
+    int accountNumber;
+    String email;
+    String address;
+    String phoneNumber;
+
+    public Account(String name, double balance, int accountNumber, String email, String address, String phoneNumber) {
+        this.name = name;
+        this.balance = balance;
+        this.accountNumber = accountNumber;
+        this.email = email;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            System.out.println("Deposit of " + amount + " made. New balance is " + balance);
+        } else {
+            System.out.println("Invalid amount for deposit");
+        }
+    }
+
+    public void withdraw(double amount) {
+        if (amount > 0 && balance >= amount) {
+            balance -= amount;
+            System.out.println("Withdrawal of " + amount + " made. New balance is " + balance);
+        } else {
+            System.out.println("Invalid amount for withdrawal");
+        }
+    }
+
+    public void transfer(double amount, Account receiver) {
+        if (amount > 0 && balance >= amount) {
+            withdraw(amount);
+            receiver.deposit(amount);
+            System.out.println("Transfer of " + amount + " from account " + accountNumber + " to account " + receiver.accountNumber + " successful.");
+        } else {
+            System.out.println("Invalid amount for transfer");
+        }
+    }
+
+    public void printTransactionHistory() {
+        // To implement this method, you would typically have a database of transactions
+        // related to this account. Here, we just simulate a simple transaction history.
+        System.out.println("Transaction History for account " + accountNumber);
+        System.out.println("1. Deposit of 500 on 02/25/2022");
+        System.out.println("2. Withdrawal of 200 on 02/26/2022");
+    }
+}
+
+class OnlineBank {
+    List<Account> accounts;
+
+    public OnlineBank() {
+        accounts = new ArrayList<>();
+    }
+
+    public void createAccount(String name, double balance, int accountNumber, String email, String address, String phoneNumber) {
+        Account newAccount = new Account(name, balance, accountNumber, email, address, phoneNumber);
+        accounts.add(newAccount);
+        System.out.println("Account " + accountNumber + " created for " + name);
+    }
+
+    public Account findAccountByNumber(int accountNumber) {
+        for (Account account : accounts) {
+            if (account.accountNumber == accountNumber) {
+                return account;
+            }
+        }
+        return null;
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        OnlineBank onlineBank = new OnlineBank();
+        onlineBank.createAccount("Alice", 1000, 12345678, "alice@example.com", "123 Main St", "123-456-7890");
+        onlineBank.createAccount("Bob", 500, 23456789, "bob@example.com", "456 Elm St", "456-789-0123");
+
+        Account aliceAccount = onlineBank.findAccountByNumber(12345678);
+        aliceAccount.deposit(500);
+        aliceAccount.withdraw(200);
+        aliceAccount.transfer(300, onlineBank.findAccountByNumber(23456789));
+        aliceAccount.printTransactionHistory();
+    }
+}
